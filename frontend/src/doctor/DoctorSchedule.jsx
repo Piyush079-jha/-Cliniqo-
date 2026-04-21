@@ -432,7 +432,7 @@ export default function Schedule() {
           </>
         )}
 
-        {/* ──── BLOCKED DATES TAB ──── */}
+        {/* BLOCKED DATES TAB  */}
         {tab === "blocked" && (
           <div className="sc-cal-wrap">
             <div className="sc-cal-title">Block Specific Dates</div>

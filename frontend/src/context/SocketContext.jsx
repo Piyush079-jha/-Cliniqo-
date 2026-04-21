@@ -17,7 +17,7 @@ export function SocketProvider({ children, user, doctor }) {
   const [incomingCall, setIncomingCall] = useState(null);
   const [socketReady,  setSocketReady]  = useState(false);
 
-  // ── Unlock audio on first user interaction (fixes autoplay block) ─────────
+  //  Unlock audio on first user interaction 
   useEffect(() => {
     const unlock = () => {
       // Init ringtone ref
@@ -56,7 +56,7 @@ export function SocketProvider({ children, user, doctor }) {
     }
   };
 
-  // ── Connect once per user ─────────────────────────────────────────────────
+  //  Connect once per user 
   useEffect(() => {
     const userId = doctor?._id || user?._id;
     const role   = doctor?._id ? "doctor" : "patient";
@@ -74,7 +74,6 @@ export function SocketProvider({ children, user, doctor }) {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log(`[Socket] Connected: ${socket.id} as ${role}_${userId}`);
       socket.emit("register", { userId, role });
       setSocketReady(true);
     });
@@ -89,7 +88,7 @@ export function SocketProvider({ children, user, doctor }) {
       setSocketReady(true);
     }
 
-    // ── Patient: receive incoming call from any page ──────────────────────
+    //  Patient: receive incoming call from any page 
 socket.on("incoming-call", ({ consultationId, doctorName, roomId }) => {
   setIncomingCall({ consultationId, doctorName, roomId });
   playRingtone();
@@ -104,10 +103,8 @@ socket.on("video-request-rejected", () => stopRingtone());
 socket.on("new-video-request", () => {
   new Audio("/notification.mp3").play().catch(() => {});
 });
-    // ── Doctor: short notification sound when VC request accepted ─────────
-    
-
-    return () => {
+    // Doctor: short notification sound when VC request accepted 
+        return () => {
   stopRingtone();
   socket.off("call-missed");
   socket.off("call-ended-notify");
@@ -119,7 +116,7 @@ socket.off("new-video-request");
 };
   }, [user?._id, doctor?._id]);
 
-  // ── Patient accepts call ──────────────────────────────────────────────────
+  // Patient accepts call 
   const acceptCall = useCallback(async () => {
     if (!incomingCall) return;
     stopRingtone();
@@ -151,7 +148,7 @@ socket.off("new-video-request");
     }
   }, [incomingCall, user, navigate]);
 
-  // ── Patient declines call ─────────────────────────────────────────────────
+  //  Patient declines call
   const declineCall = useCallback(async () => {
     if (!incomingCall) return;
     stopRingtone();
@@ -182,7 +179,7 @@ socket.off("new-video-request");
     }}>
       {children}
 
-      {/* ── Global incoming call overlay — renders on ANY page ─────────── */}
+      {/*  Global incoming call overlay  renders on ANY page*/}
       {incomingCall && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 9999,

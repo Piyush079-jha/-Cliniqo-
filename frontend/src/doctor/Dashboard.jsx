@@ -1742,7 +1742,6 @@ const saraTTSSpeak = useCallback(async (text, onEnd) => {
     audio.onended = done; audio.onerror = done;
     await audio.play();
   } catch (err) {
-    console.warn("Sara TTS — browser fallback:", err.message);
     saraIsPlayingRef.current = false;
     setVaSpeaking(false);
     browserFallback();
@@ -1834,7 +1833,6 @@ if (!vaActiveRef.current) return;
 const rawCmd = text;
 const lower = text.toLowerCase().trim();
 const cmd = lower;
-console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
 
 const CLINICAL_Q     = /\b(what is|what are|what'?s|tell me about|explain|describe|how (?:to treat|does|do i treat)|treatment for|management of|dose of|dosage for?|side effects? of|contraindication|drug interaction|can i (?:give|prescribe|use)|should i (?:give|prescribe)|when to (?:give|use)|indication for|mechanism of|difference between|is (?:\w+ ){0,3}safe|define|cause of|causes of|sign of|signs of|complication)\b/i;
 const CLINICAL_TOPIC = /\b(antibiotic|pharmacology|anatomy|physiology|pathology|dosage|dose|mg|ml|treatment|therapy|symptom|disease|condition|infection|diabetes|hypertension|malaria|dengue|typhoid|asthma|pneumonia|tuberculosis|tb|covid|cancer|fracture|arthritis|migraine|protocol|guideline|icd|surgery|procedure|evidence|journal|indication|contraindication|interaction|side effect|adverse|toxicity|overdose|antidote|vaccine|steroid|insulin|beta.?blocker|ace inhibitor|statin|anticoagulant|antiplatelet|antihistamine|diuretic|analgesic|antipyretic|antifungal|antiviral)\b/i;
@@ -2081,7 +2079,6 @@ const saraStartRecording = useCallback(async () => {
           { withCredentials: true, headers: { "Content-Type": "multipart/form-data" }, timeout: 15000 }
         );
         const text = data.text?.trim();
-        console.log("🎙️ WHISPER:", text);
         if (!text || text.length < 2) {
           if (vaActiveRef.current && !saraIsPlayingRef.current) {
             setTimeout(() => saraStartRecordingRef.current?.(), 400);
@@ -2091,7 +2088,6 @@ const saraStartRecording = useCallback(async () => {
         showToast(`🎙️ "${text}"`);
         if (vaActiveRef.current) saraHandleCommandRef.current?.(text);
       } catch (err) {
-        console.error("Whisper error:", err.message);
         if (vaActiveRef.current && !saraIsPlayingRef.current) {
           setTimeout(() => saraStartRecordingRef.current?.(), 1000);
         }
@@ -2214,7 +2210,6 @@ const speak = (text, onEnd) => {
     setTimeout(() => onEnd?.(), 600);
   };
   utt.onerror = (e) => {
-    console.error("🔊 SARA SPEAK ERROR:", e.error);
     // "interrupted" is NOT a real error — it means the doctor spoke
     // over Sara intentionally. Treat it the same as onend.
     if (speakWatchdogRef.current) {
@@ -2316,7 +2311,6 @@ const startContinuousListening = () => {
   if (isListeningLockRef.current)   return;
   const msUntilSafe = speakingBlockUntilRef.current - Date.now();
   if (msUntilSafe > 0) {
-    console.log(`🔇 SARA MIC: blocked for ${Math.round(msUntilSafe)}ms — Sara still speaking`);
     setTimeout(() => startContinuousListeningRef.current?.(), msUntilSafe + 300);
     return;
   }
@@ -2339,7 +2333,6 @@ const startContinuousListening = () => {
   recog.onstart = () => {
     micRetryCountRef.current = 0;
     setVaListening(true);
-    console.log("🎙️ SARA MIC: started listening");
   };
 
   recog.onresult = (e) => {
@@ -2365,27 +2358,22 @@ const startContinuousListening = () => {
   };
 
   recog.onerror = (e) => {
-    console.error("❌ SARA MIC ERROR:", e.error);
     setVaListening(false);
     vaRecogRef.current         = null;
     isListeningLockRef.current = false;
     if (e.error === "not-allowed") {
-      console.error("❌ SARA: Microphone permission denied by browser");
       showToast("Microphone access denied.", "error");
       deactivateVoiceAssistant();
       return;
     }
     if (["service-not-allowed", "audio-capture"].includes(e.error)) {
-      console.error("❌ SARA: Microphone hardware/service error:", e.error);
       showToast(`🎙️ Microphone error: ${e.error}`, "error");
       deactivateVoiceAssistant();
       return;
     }
     if (e.error === "network") {
-      console.warn("⚠️ SARA MIC: network error — retrying in 2s");
       isListeningLockRef.current = false;
       vaRecogRef.current = null;
-      // Network blip — never deactivate Sara for this, just retry silently
       micRetryCountRef.current = Math.max(0, micRetryCountRef.current - 1);
       setTimeout(() => {
         if (vaActiveRef.current && !isListeningLockRef.current) {
@@ -2394,31 +2382,38 @@ const startContinuousListening = () => {
       }, 2000);
       return;
     }
+    // "aborted" = Chrome killed the mic too fast — not a real error, reset and retry silently
+    if (e.error === "aborted") {
+      isListeningLockRef.current = false;
+      vaRecogRef.current = null;
+      micRetryCountRef.current = 0;
+      setTimeout(() => {
+        if (vaActiveRef.current && !isListeningLockRef.current) {
+          startContinuousListeningRef.current?.();
+        }
+      }, 1500);
+      return;
+    }
     micRetryCountRef.current += 1;
-    console.warn(`⚠️ SARA MIC: retry ${micRetryCountRef.current} of ${MIC_RETRY_LIMIT}`);
     if (micRetryCountRef.current >= MIC_RETRY_LIMIT) {
-      console.error("❌ SARA: mic retry limit reached, deactivating");
       showToast("Sara's microphone stopped responding. Please reactivate.", "error");
       deactivateVoiceAssistant();
       return;
     }
     const backoff = Math.min(3000 * 2 ** (micRetryCountRef.current - 1), 30000);
-    console.log(`⏳ SARA MIC: retrying in ${backoff}ms`);
     if (vaActiveRef.current) {
       setTimeout(() => startContinuousListeningRef.current?.(), backoff);
     }
   };
 
   recog.onend = () => {
-    console.log("🔴 SARA MIC: stopped. vaActive =", vaActiveRef.current, "| speaking =", window.speechSynthesis.speaking, "| lock =", isListeningLockRef.current);
     setVaListening(false);
     vaRecogRef.current         = null;
     isListeningLockRef.current = false;
     if (!vaActiveRef.current) {
-      console.log("⏹️ SARA MIC: not restarting — Sara is deactivated");
       return;
     }
-    const delay = IS_IOS ? 600 : 900;
+    const delay = IS_IOS ? 1200 : 1800;
     setTimeout(() => {
       if (!vaActiveRef.current) return;
       const msSafe = speakingBlockUntilRef.current - Date.now();
@@ -3219,13 +3214,11 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
 
   // ── Drop noise / non-medical gibberish ──
   if (!cmd || cmd === "__REJECT__" || cmd.trim().length < 2) {
-    console.warn("🔇 SARA COMMAND: rejected as noise =", cmd);
     setTimeout(() => startContinuousListeningRef.current?.(), 600);
     return;
   }
   // ── Always check echo block first — even during rx flow ──
   if (Date.now() < speakingBlockUntilRef.current) {
-    console.warn("🔇 SARA COMMAND: ignored — echo block active");
     return;
   }
 
@@ -3282,7 +3275,6 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
   // ── ASR normalisation ──
   const normalised = normaliseASR(cmd);
   if (normalised !== cmd.toLowerCase()) {
-    console.log(`🔤 SARA ASR: "${cmd}" → "${normalised}"`);
     showToast(`🔤 Understood: "${normalised}"`);
     cmd = normalised;
   }
@@ -3345,9 +3337,9 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
               if (rxForm.patientAge)  filled.push(`age ${rxForm.patientAge}`);
               if (rxForm.diagnosis)   filled.push(`diagnosis ${rxForm.diagnosis}`);
               if (rxForm.drugs[0]?.name) filled.push(`drug ${rxForm.drugs[0].name}`);
-              return `The prescription form already has ${filled.join(", ")}. Shall I continue filling it, or would you like to start fresh?`;
+              return `The form already has ${filled.join(", ")} filled in. Take your time, Doctor — it'll be here when you need it.`;
             }
-            return `The prescription form is empty Doctor. Would you like me to help you fill it step by step?`;
+            return `The prescription form is all clear, Doctor. Fill it in whenever you're ready.`;
           })(),
           videoconsult: (() => {
             const pending  = vcRequests.filter(r => r.status === "Pending").length;
@@ -3842,7 +3834,7 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
         }
         isListeningLockRef.current = false;
         if (!rxForm.patientName || !rxForm.diagnosis || !rxForm.drugs[0]?.name) {
-          speak(`Doctor, the prescription is incomplete. I still need ${!rxForm.patientName ? "patient name, " : ""}${!rxForm.diagnosis ? "diagnosis, " : ""}${!rxForm.drugs[0]?.name ? "at least one drug" : ""}. Please fill those first.`, resume);
+          speak(`Just a heads-up Doctor — looks like ${!rxForm.patientName ? "the patient name, " : ""}${!rxForm.diagnosis ? "diagnosis, " : ""}${!rxForm.drugs[0]?.name ? "and at least one drug are" : "is"} still missing. No rush — fill those in and I'll save it right away.`, resume);
           return;
         }
         speak("Saving the prescription now.", async () => {
@@ -3859,7 +3851,7 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
             }, { withCredentials: true });
             setRxForm({ appointmentId:"", patientId:"", patientName:"", patientAge:"", patientEmail:"", diagnosis:"", drugs:[{ name:"", dose:"", frequency:"", duration:"" }], notes:"" });
             fetchRxHistory();
-            speak("Done. Prescription saved and the patient has been notified.", resume);
+            speak("All done, Doctor! Prescription's saved and the patient has been notified.", resume);
           } catch(err) {
             speak(`Sorry Doctor. I could not save the prescription. ${err.response?.data?.message || "Please try manually."}`, resume);
           }
@@ -4094,14 +4086,13 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
         {
       match: has("prescription","medicine","rx","prescribe","write","tablet","capsule","drug","diagnosed","suffering","diagnosis","medic","prescript","medicin","pescription","perscription","presciption","open prescription","open rx","go to prescription","show prescription"),
       handler: async (c) => {
-        // ── Prescription is a critical medical document — Sara must NOT fill it ──
-        // Just open the tab and let the doctor fill it manually
+        // ── Open prescription tab ──
         setActiveTab("prescription");
         const pick2 = (arr) => arr[Math.floor(Math.random() * arr.length)];
         speak(pick2([
-          `Prescription tab is open Doctor.`,
-          `Opening the prescription builder now Doctor.`,
-          `Here is the prescription tab Doctor.`,
+          `Opening the prescription panel, Doctor. Please note — this is a critical medical task and must be completed by you only. I am here to assist if you need any help structuring it.`,
+          `Sure, opening the prescription tab now. This is a critical task, Doctor. The prescription must be filled by you only. Let me know if you need any guidance.`,
+          `There you go, Doctor — prescription form is open. This is a critical medical task and must be completed by you alone. I will be right here if you need help.`,
         ]), resume);
       },
     },
@@ -4274,9 +4265,9 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
         if (!rxForm.diagnosis)      missing.push("diagnosis");
         if (!rxForm.drugs[0]?.name) missing.push("at least one drug");
         if (missing.length === 0) {
-          speak(`The prescription looks complete Doctor. Patient ${rxForm.patientName}, diagnosis ${rxForm.diagnosis}. Ready to save whenever you are.`, resume);
+          speak(`Everything looks good, Doctor! Patient ${rxForm.patientName}, diagnosis ${rxForm.diagnosis}. Just say save prescription whenever you're ready.`, resume);
         } else {
-          speak(`The prescription is missing ${missing.join(" and ")} Doctor.`, resume);
+          speak(`Almost there, Doctor! Just ${missing.join(" and ")} left to fill in.`, resume);
         }
       },
     },
@@ -4285,29 +4276,23 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
   let matched = false;
   for (const { match, handler } of COMMANDS) {
     if (match(cmd)) {
-      console.log("✅ SARA COMMAND: matched handler for =", `"${cmd}"`);
       matched = true;
       await handler(cmd);
       return;
     }
   }
   if (!matched) {
-    console.warn("⚠️ SARA COMMAND: no local match found for =", `"${cmd}"`, "— falling back to AI");
+    // falling back to AI
   }
 
   // ── AI Fallback — graceful degradation if backend unreachable ──
-  // Block AI fallback for anything that sounds medical/clinical
-  // to prevent hallucinated patient data, diagnoses or vitals
-  console.log("🤖 SARA AI FALLBACK: checking if blocked for cmd =", `"${cmd}"`);
   // Only block Groq fallback for commands that contain specific live patient data
   // to prevent Sara hallucinating vitals, names, or values she was never told
   const PATIENT_DATA_RE = /\b(bp is|blood pressure is|sugar is|glucose is|temperature is|vitals? (?:are|is)|patient name is|patient is \w+)\b/i;
   const shouldBlockAI = PATIENT_DATA_RE.test(lower);
 
-  console.log("🤖 SARA AI FALLBACK: shouldBlockAI =", shouldBlockAI);
   if (!shouldBlockAI) {
     try {
-      console.log("🤖 SARA AI FALLBACK: calling /api/v1/ai/sara with cmd =", `"${cmd}"`);
       const { data } = await axios.post(
         `${BASE}/api/v1/ai/sara`,
         {
@@ -4328,19 +4313,104 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
         },
         { withCredentials: true }
       );
-      console.log("🤖 SARA AI FALLBACK: response =", data);
       if (data.reply && typeof data.reply === "string" && data.reply.trim().length > 0) {
-        console.log("✅ SARA AI FALLBACK: speaking reply =", `"${data.reply}"`);
         speak(data.reply, resume);
         return;
-      } else {
-        console.warn("⚠️ SARA AI FALLBACK: reply was empty or null");
       }
     } catch (err) {
-      console.error("❌ SARA AI FALLBACK: request failed =", err.message);
+      // AI fallback failed silently
     }
   }
 
+  // ── Smart fallback: try to give a logical answer based on what was said ──
+  const lowerCmd = cmd.toLowerCase();
+
+  // Greetings/small talk
+  if (/\b(hi+|hello+|hey+|howdy|sup|what'?s up)\b/.test(lowerCmd)) {
+    speak(pick([
+      `Hello Doctor ${docFirst}. What can I help you with?`,
+      `Hi Doctor. I am right here. What do you need?`,
+    ]), resume);
+    return;
+  }
+
+  // Questions about Sara
+  if (/\b(who made you|who built you|who created you|who designed you|who is your creator|who programmed you)\b/.test(lowerCmd)) {
+    speak(`I was built by Piyush Kumar Jha, as part of the Cliniqo healthcare platform. I am Sara — your personal voice assistant.`, resume);
+    return;
+  }
+
+  // Questions about Cliniqo
+  if (/\b(what is cliniqo|about cliniqo|tell me about cliniqo|cliniqo platform)\b/.test(lowerCmd)) {
+    speak(`Cliniqo is a healthcare management platform designed to simplify appointments, prescriptions, and video consultations for doctors and patients. I am Sara, your voice assistant within Cliniqo.`, resume);
+    return;
+  }
+
+  // Weather / news / sports — out of scope
+  if (/\b(weather|forecast|temperature outside|news|headlines|cricket|football|sports|score)\b/.test(lowerCmd)) {
+    speak(`I am not connected to the internet for live updates Doctor. I focus on your clinical workflow. Is there anything I can help you with here?`, resume);
+    return;
+  }
+
+  // Math / calculations
+  if (/\b(calculate|what is \d|how much is|\d+\s*[+\-*/]\s*\d+)\b/.test(lowerCmd)) {
+    try {
+      const expr = lowerCmd.match(/(\d[\d\s+\-*/().]+\d)/)?.[1];
+      if (expr) {
+        // eslint-disable-next-line no-new-func
+        const result = Function(`"use strict"; return (${expr})`)();
+        speak(`That would be ${result}, Doctor.`, resume);
+        return;
+      }
+    } catch (_) {}
+    speak(`I am not the best at maths Doctor, but you can check the notes field for quick calculations.`, resume);
+    return;
+  }
+
+  // Farewells not caught by main handler
+  if (/\b(see you|take care|later|cya|good luck|all the best)\b/.test(lowerCmd)) {
+    speak(pick([
+      `Take care Doctor ${docFirst}. I will be right here when you need me.`,
+      `Of course. See you soon Doctor.`,
+    ]), resume);
+    return;
+  }
+
+  // Affirmations
+  if (/^(yes|yeah|yep|yup|sure|correct|right|exactly|absolutely|perfect|great|go ahead|proceed)[\s!.]*$/.test(lowerCmd)) {
+    speak(pick([
+      `Sure, go ahead Doctor. What would you like me to do?`,
+      `Of course. What do you need?`,
+      `I am listening Doctor.`,
+    ]), resume);
+    return;
+  }
+
+  // Negations
+  if (/^(no|nope|not really|not now|never mind|nevermind|cancel|stop|ignore)[\s!.]*$/.test(lowerCmd)) {
+    speak(pick([
+      `No problem at all Doctor. Just let me know when you need something.`,
+      `Understood. I will wait.`,
+    ]), resume);
+    return;
+  }
+
+  // Numbers only (e.g. accidental mic trigger)
+  if (/^\d+$/.test(lowerCmd.trim())) {
+    speak(`I heard a number, but I am not sure what to do with it. Could you give me a bit more context Doctor?`, resume);
+    return;
+  }
+
+  // Generic question starting with "what", "how", "why", "when", "where", "can you"
+  if (/^(what|how|why|when|where|can you|could you|do you|are you|is there|will you|would you)\b/.test(lowerCmd)) {
+    speak(pick([
+      `That is a good question Doctor. I am not sure I have an answer for that one, but the AI assistant tab is designed exactly for clinical and general queries. Would you like me to open it?`,
+      `I am not certain about that one Doctor. Try the AI assistant — it can answer far more than I can. Shall I open it?`,
+    ]), resume);
+    return;
+  }
+
+  // Final fallback with contextual suggestions
   const _suggestions = [
     pendingAppts > 0 ? `accept the ${pendingAppts} pending appointment${pendingAppts !== 1 ? "s" : ""}` : null,
     pendingVC > 0    ? `accept the video call from ${vcRequests.find(r => r.status === "Pending")?.patientName || "a patient"}` : null,
@@ -4359,15 +4429,12 @@ console.log("🧠 SARA COMMAND: received =", `"${cmd}"`);
   ]), resume);
 };
 
-// ── 5. activateVoiceAssistant — last, calls everything above ──
+// activateVoiceAssistant — last, calls everything above ──
 const activateVoiceAssistant = () => {
-  console.log("🟢 SARA: activateVoiceAssistant called");
   if (!("speechSynthesis" in window)) {
-    console.error("❌ SARA: speechSynthesis not supported");
     showToast("❌ Voice not supported in this browser.", "error"); return;
   }
   if (!("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
-    console.error("❌ SARA: SpeechRecognition not supported");
     showToast("🎙️ Speech recognition needs Chrome or Brave.", "error"); return;
   }
   if (wakeWordRef.current) {
@@ -4411,24 +4478,6 @@ const activateVoiceAssistant = () => {
     });
   }, 300);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Keep stable refs pointing to the latest closures after every render
   useEffect(() => {
     saraStartRecordingRef.current      = saraStartRecording;
