@@ -140,21 +140,21 @@ const AboutUs = () => {
 
   const fetchReviews = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/v1/review/getall", { withCredentials: true });
+      const { data } = await axios.get("https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/review/getall", { withCredentials: true });
       setReviews(data.reviews || []);
     } catch { setReviews([]); }
   };
 
   const handleAdd = async ({ comment, rating }) => {
     try {
-      const { data } = await axios.post("http://localhost:5000/api/v1/review/post", { comment, rating }, { withCredentials: true });
+      const { data } = await axios.post("https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/review/post", { comment, rating }, { withCredentials: true });
       toast.success(data.message); setShowForm(false); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to post review"); }
   };
 
   const handleEdit = async ({ comment, rating }) => {
     try {
-      const { data } = await axios.put(`http://localhost:5000/api/v1/review/update/${editingReview._id}`, { comment, rating }, { withCredentials: true });
+      const { data } = await axios.put(`https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/review/update/${editingReview._id}`, { comment, rating }, { withCredentials: true });
       toast.success(data.message); setEditingReview(null); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to update review"); }
   };
@@ -162,7 +162,7 @@ const AboutUs = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this review?")) return;
     try {
-      const { data } = await axios.delete(`http://localhost:5000/api/v1/review/delete/${id}`, { withCredentials: true });
+      const { data } = await axios.delete(`https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/review/delete/${id}`, { withCredentials: true });
       toast.success(data.message); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to delete review"); }
   };

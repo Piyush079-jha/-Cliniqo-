@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Navigate } from "react-router-dom";
 
-const BASE = "http://localhost:5000";
+const BASE = "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 const AddNewAdmin = () => {
   const { isAdminAuthenticated } = useContext(Context);

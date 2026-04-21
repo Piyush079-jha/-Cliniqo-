@@ -451,7 +451,7 @@ const DoctorModal = ({ doctor, onClose, navigate, currentUser, isAuthenticated }
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/v1/review/doctor/${doctor._id}`);
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login"}/api/v1/review/doctor/${doctor._id}`);
       setReviews(res.data.reviews || []);
       setAvgRating(res.data.avgRating || 0);
     } catch (err) {
@@ -477,7 +477,7 @@ const DoctorModal = ({ doctor, onClose, navigate, currentUser, isAuthenticated }
     if (comment.trim().length < 10) return toast.error("Comment must be at least 10 characters!");
     setSubmitting(true);
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/v1/review/doctor/${doctor._id}/post`, { rating, comment }, { withCredentials: true });
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login"}/api/v1/review/doctor/${doctor._id}/post`, { rating, comment }, { withCredentials: true });
       toast.success("Review posted!"); setComment(""); setRating(5); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to post review"); }
     setSubmitting(false);
@@ -487,7 +487,7 @@ const DoctorModal = ({ doctor, onClose, navigate, currentUser, isAuthenticated }
     if (editComment.trim().length < 10) return toast.error("Comment must be at least 10 characters!");
     setEditSubmitting(true);
     try {
-      await axios.put(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/v1/review/update/${editId}`, { rating: editRating, comment: editComment }, { withCredentials: true });
+      await axios.put(`${import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login"}/api/v1/review/update/${editId}`, { rating: editRating, comment: editComment }, { withCredentials: true });
       toast.success("Review updated!"); setEditId(null); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to update review"); }
     setEditSubmitting(false);
@@ -496,7 +496,7 @@ const DoctorModal = ({ doctor, onClose, navigate, currentUser, isAuthenticated }
   const handleDeleteReview = async (id) => {
     if (!window.confirm("Delete this review?")) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/v1/review/delete/${id}`, { withCredentials: true });
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login"}/api/v1/review/delete/${id}`, { withCredentials: true });
       toast.success("Review deleted!"); fetchReviews();
     } catch (err) { toast.error(err.response?.data?.message || "Failed to delete review"); }
   };
@@ -860,7 +860,7 @@ const Doctors = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setTimeout(() => setHeroVis(true), 80);
-    const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+    const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
     axios.get(`${BASE}/api/v1/user/doctors`)
       .then(res => { setDoctors(res.data.doctors || []); setLoading(false); })
       .catch((err) => { console.error("Doctors fetch error:", err.message); setLoading(false); });

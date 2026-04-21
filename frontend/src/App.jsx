@@ -42,7 +42,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 // Patient
 import PatientDashboard from "./Pages/PatientDashboard";
 
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Layout wrapper

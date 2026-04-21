@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Navigate } from "react-router-dom";
 
-const BASE = "http://localhost:5000";
+const BASE = "https://cliniqo-backend.onrender.com/api/v1/user/login";
 const COLORS = ["#1a5c3a","#c9a84c","#0ea5e9","#8b5cf6","#ef4444","#10b981","#f59e0b","#06b6d4"];
 const getColor = name => COLORS[(name?.charCodeAt(0)||0) % COLORS.length];
 const initials  = m => `${m.firstName?.[0]||""}${m.lastName?.[0]||""}`.toUpperCase();

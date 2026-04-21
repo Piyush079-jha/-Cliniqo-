@@ -19,7 +19,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     setLoggingOut(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/user/admin/logout", { withCredentials: true });
+      const res = await axios.get("https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/admin/logout", { withCredentials: true });
       toast.success(res.data.message);
       setIsAdminAuthenticated(false);
       navigate("/login");

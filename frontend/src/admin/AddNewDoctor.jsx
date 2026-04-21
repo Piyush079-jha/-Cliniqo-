@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Navigate } from "react-router-dom";
 
-const BASE = "http://localhost:5000";
+const BASE = "https://cliniqo-backend.onrender.com/api/v1/user/login";
 const DEPARTMENTS = ["Pediatrics","Orthopedics","Cardiology","Neurology","Oncology","Radiology","Physical Therapy","Dermatology","ENT"];
 
 // All possible time slots 6AM–10PM

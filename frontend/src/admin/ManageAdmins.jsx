@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Navigate } from "react-router-dom";
 
-const BASE = "http://localhost:5000";
+const BASE = "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 const AV_COLORS = ["#1a5c3a","#2563eb","#9333ea","#ea580c","#0d9488","#db2777","#c9a84c","#16a34a","#0ea5e9","#ef4444"];
 const getColor    = n => AV_COLORS[(n?.charCodeAt(0)||0) % AV_COLORS.length];

@@ -7,7 +7,7 @@ import { useSocket } from "../context/SocketContext";
 import ringtoneFile from "../assets/ringtone.mp3";
 import SR, { useSpeechRecognition } from "react-speech-recognition";
 import DOMPurify from "dompurify";
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 
 // Formatters

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../main";
 import { jsPDF } from "jspdf"; // ← PDF generator
 
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 const fmtDate = (d) =>
   d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";

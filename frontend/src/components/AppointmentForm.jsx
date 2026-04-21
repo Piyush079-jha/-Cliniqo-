@@ -81,7 +81,7 @@ const AppointmentForm = () => {
   useEffect(() => {
     setTimeout(() => setHeroVis(true), 80);
     axios
-      .get("http://localhost:5000/api/v1/user/doctors", {
+      .get("https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/doctors", {
         withCredentials: true,
       })
       .then(({ data }) => {
@@ -195,7 +195,7 @@ useEffect(() => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/v1/appointment/post",
+        "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/appointment/post",
         {
           firstName: form.firstName,
           lastName: form.lastName,

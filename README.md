@@ -85,7 +85,7 @@ Opens at: **http://localhost:5173**
 To create your first admin, use a tool like **Postman** or **Thunder Client**:
 
 ```
-POST http://localhost:5000/api/v1/user/patient/register
+POST https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/patient/register
 ```
 Then change the role in MongoDB directly from "Patient" to "Admin".
 

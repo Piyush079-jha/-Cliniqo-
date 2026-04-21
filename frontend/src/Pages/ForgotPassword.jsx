@@ -24,7 +24,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/v1/user/password/forgot",
+        "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/password/forgot",
         { email },
         {
           withCredentials: true,

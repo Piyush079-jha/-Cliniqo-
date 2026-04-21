@@ -8,7 +8,7 @@ import {
   FaUserMd, FaSignOutAlt,
 } from "react-icons/fa";
 
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 const DoctorSidebar = () => {
   const { setIsDoctorAuthenticated, setDoctor, doctor } = useContext(Context);

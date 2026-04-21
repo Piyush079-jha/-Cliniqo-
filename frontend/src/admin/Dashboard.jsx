@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaUserMd, FaCalendarAlt, FaEnvelope, FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
 
 const Dashboard = () => {
   const { admin } = useContext(Context);
