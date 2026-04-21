@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vscode/
+
+.env
+.env.*
+.env.local
+.env.production
+config.env
