@@ -1,0 +1,1 @@
+export const BASE_URL = "https://cliniqo-backend.onrender.com/api/v1";
