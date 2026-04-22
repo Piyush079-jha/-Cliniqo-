@@ -66,5 +66,9 @@ app.use("/api/v1/prescription", prescriptionRouter);
 app.use("/api/v1/video",        videoRouter);
 app.use("/api/v1/videoconsult", videoConsultationRouter);
 
+app.get("/", (req, res) => {
+  res.status(200).json({ success: true, message: "Cliniqo API is running" });
+});
+
 app.use(errorMiddleware);
 export default app;
