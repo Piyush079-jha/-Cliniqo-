@@ -316,16 +316,23 @@ useEffect(() => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       localStream.current = stream;
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.play().catch(() => {});
+      }
+      console.log("[Media] Got video+audio tracks:", stream.getTracks().map(t => t.kind));
       return stream;
-    } catch {
+    } catch (videoErr) {
+      console.warn("[Media] Video failed, trying audio only:", videoErr.message);
       try {
-        // Camera failed — try audio only
         const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         localStream.current = stream;
+        if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         setStatusMsg("Camera unavailable — audio only");
+        console.log("[Media] Got audio only");
         return stream;
       } catch (err) {
+        console.error("[Media] All media failed:", err.message);
         setStatusMsg(`Media error: ${err.message}`);
         setCallState(CALL_STATE.ERROR);
         return null;
