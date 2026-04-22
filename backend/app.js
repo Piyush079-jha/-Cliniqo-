@@ -21,7 +21,11 @@ const app = express();
 
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL],
+  origin: [
+    process.env.FRONTEND_URL,
+    "https://cliniqo-ten.vercel.app",
+    "http://localhost:5173",
+  ],
   methods: ["GET", "POST", "DELETE", "PUT"],
   credentials: true,
 }));
