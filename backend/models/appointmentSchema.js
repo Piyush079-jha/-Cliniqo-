@@ -9,6 +9,7 @@ const appointmentSchema = new mongoose.Schema({
   nic:         { type: String, required: false },
   dob:         { type: Date,   required: [true, "DOB Is Required!"] },
   gender:      { type: String, required: [true, "Gender Is Required!"],      enum: ["Male", "Female"] },
+acceptedAt: { type: Date, default: null },
 
   appointment_date: { type: String, required: [true, "Appointment Date Is Required!"] },
   appointment_time: { type: String, default: null },

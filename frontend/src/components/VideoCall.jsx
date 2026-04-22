@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Context } from "../main";
 import { useSocket } from "../context/SocketContext";
 import ringtoneFile from "../assets/ringtone.mp3";
-const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ICE servers for WebRTC — helps punch through firewalls
@@ -12,6 +12,15 @@ const ICE_SERVERS = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
+    {
+      urls: [
+        "turn:openrelay.metered.ca:80",
+        "turn:openrelay.metered.ca:443",
+        "turn:openrelay.metered.ca:443?transport=tcp",
+      ],
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
   ],
 };
 

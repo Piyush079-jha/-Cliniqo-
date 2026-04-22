@@ -125,6 +125,7 @@ export const updateAppointmentStatus = catchAsyncErrors(async (req, res, next) =
   // ✅ AUTO-ENABLE video call when Accepted or Confirmed
   if (["Accepted", "Confirmed"].includes(req.body.status)) {
     req.body.videoCallEnabled = true;
+    req.body.acceptedAt = new Date();
   }
 
   // ✅ DISABLE video call if Rejected or Cancelled

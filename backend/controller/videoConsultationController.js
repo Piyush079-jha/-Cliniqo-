@@ -44,7 +44,28 @@ export const createRequest = catchAsyncErrors(async (req, res, next) => {
       message: "Video consultation request already exists",
     });
   }
+// If acceptedAt is missing, fall back to appointment's updatedAt
+  const windowStart = appointment.acceptedAt || appointment.updatedAt;
+  const windowEnd   = new Date(new Date(windowStart).getTime() + 24 * 60 * 60 * 1000);
+  const now         = new Date();
 
+  if (now > windowEnd) {
+    return next(new ErrorHandler(
+      "The 24-hour window for video consultation requests has expired.", 400
+    ));
+  }
+
+  const requestCount = await VideoConsultation.countDocuments({
+    appointmentId,
+    patientId: req.user._id,
+    createdAt: { $gte: windowStart, $lte: windowEnd },
+  });
+
+  if (requestCount >= 3) {
+    return next(new ErrorHandler(
+      "You have reached the maximum of 3 video consultation requests for this appointment.", 400
+    ));
+  }a
   const doctor = await User.findById(appointment.doctorId);
   const doctorName = doctor
     ? `Dr. ${doctor.firstName} ${doctor.lastName}`
