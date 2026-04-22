@@ -14,7 +14,7 @@ const MessageForm = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/message/send",
+        "https://cliniqo-backend.onrender.com/api/v1/message/send",
         form,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );

@@ -99,7 +99,7 @@ const Navbar = () => {
       setLoadingAppts(true);
       try {
         const res = await axios.get(
-          "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/appointment/myappointments",
+          "https://cliniqo-backend.onrender.com/api/v1/appointment/myappointments",
           { withCredentials: true },
         );
         setAppointments((res.data.appointments || []).reverse());
@@ -142,8 +142,8 @@ const Navbar = () => {
       const formData = new FormData();
       formData.append("avatar", avatarFile);
       const endpoint = isAdminAuthenticated
-        ? "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/avatar/update/admin"
-        : "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/avatar/update";
+        ? "https://cliniqo-backend.onrender.com/api/v1/user/avatar/update/admin"
+        : "https://cliniqo-backend.onrender.com/api/v1/user/avatar/update";
       const res = await axios.put(endpoint, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
@@ -167,8 +167,8 @@ const Navbar = () => {
     setSavingProfile(true);
     try {
       const endpoint = isAdminAuthenticated
-        ? "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/profile/update/admin"
-        : "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/profile/update";
+        ? "https://cliniqo-backend.onrender.com/api/v1/user/profile/update/admin"
+        : "https://cliniqo-backend.onrender.com/api/v1/user/profile/update";
       const res = await axios.put(endpoint, profileForm, {
         withCredentials: true,
       });
@@ -188,8 +188,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const endpoint = isAdminAuthenticated
-        ? "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/admin/logout"
-        : "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/patient/logout";
+        ? "https://cliniqo-backend.onrender.com/api/v1/user/admin/logout"
+        : "https://cliniqo-backend.onrender.com/api/v1/user/patient/logout";
       const res = await axios.get(endpoint, { withCredentials: true });
       toast.success(res.data.message);
       setIsAuthenticated(false);
@@ -208,8 +208,8 @@ const Navbar = () => {
     }
     try {
       const endpoint = isAdminAuthenticated
-        ? "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/password/update/admin"
-        : "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/password/update";
+        ? "https://cliniqo-backend.onrender.com/api/v1/user/password/update/admin"
+        : "https://cliniqo-backend.onrender.com/api/v1/user/password/update";
       await axios.put(
         endpoint,
         {

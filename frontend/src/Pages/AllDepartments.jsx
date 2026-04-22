@@ -119,7 +119,7 @@ const AllDepartments = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/doctors")
+    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/doctors")
       .then(res => { setDoctors(res.data.doctors); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

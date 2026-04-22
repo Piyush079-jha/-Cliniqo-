@@ -29,7 +29,7 @@ const ResetPassword = () => {
     setLoading(true);
     try {
       const res = await axios.put(
-        `https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/password/reset/${token}`,
+        `https://cliniqo-backend.onrender.com/api/v1/user/password/reset/${token}`,
         { password, confirmPassword: confirm },
         {
           withCredentials: true,
