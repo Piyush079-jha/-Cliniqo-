@@ -161,8 +161,9 @@ export default function VideoCall({ role: propRole, userName: propUserName, onEn
   const remoteVideoRef = useRef(null); // the other person's camera (main screen)
 
   // ── WebRTC refs ───────────────────────────────────────────────────────────
-  const pcRef       = useRef(null); // RTCPeerConnection instance
-  const localStream = useRef(null); // your local camera/mic stream
+  const pcRef            = useRef(null); // RTCPeerConnection instance
+  const localStream      = useRef(null); // your local camera/mic stream
+  const iceCandidateBuf  = useRef([]);   // buffer ICE candidates before remote desc is set
 
   // ── Timer and chat refs ───────────────────────────────────────────────────
   const timerRef   = useRef(null);  // call duration interval
@@ -357,26 +358,40 @@ ringtoneRef.current?.play().catch(() => {});
         console.log(`[WebRTC] Sent offer to new joiner ${socketId}`);
       });
 
-      // We received an offer — create answer and send back
+      // We received an offer — create answer, flush buffered ICE candidates
       socket.on("offer", async ({ from, offer }) => {
         if (!isMounted) return;
+        iceCandidateBuf.current = [];
         const pc = createPC(from);
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         socket.emit("answer", { to: from, answer });
+        // Flush any ICE candidates that arrived before offer was processed
+        for (const c of iceCandidateBuf.current) {
+          try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+        }
+        iceCandidateBuf.current = [];
         console.log(`[WebRTC] Sent answer to ${from}`);
       });
 
-      // We received an answer — set it as remote description
+      // We received an answer — set remote description then flush buffered ICE candidates
       socket.on("answer", async ({ answer }) => {
         await pcRef.current?.setRemoteDescription(new RTCSessionDescription(answer));
+        for (const c of iceCandidateBuf.current) {
+          try { await pcRef.current?.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+        }
+        iceCandidateBuf.current = [];
       });
 
-      // ICE candidate received — add it to improve connection quality
+      // ICE candidate received — buffer if remote description not set yet
       socket.on("ice-candidate", async ({ candidate }) => {
         try {
-          await pcRef.current?.addIceCandidate(new RTCIceCandidate(candidate));
+          if (pcRef.current?.remoteDescription) {
+            await pcRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+          } else {
+            iceCandidateBuf.current.push(candidate);
+          }
         } catch {}
       });
 

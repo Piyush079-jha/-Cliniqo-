@@ -79,15 +79,23 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, userId, userName, role }) => {
     socket.join(roomId);
     if (!rooms[roomId]) rooms[roomId] = [];
+
+    // Get existing participants BEFORE adding new joiner
+    const existingParticipants = rooms[roomId].filter(p => p.userId !== userId);
+
+    // Now add the new joiner
     rooms[roomId] = rooms[roomId].filter(p => p.userId !== userId);
     rooms[roomId].push({ socketId: socket.id, userId, userName, role });
+
+    // Tell existing participants someone joined
     socket.to(roomId).emit("user-joined", {
       socketId: socket.id, userId, userName, role,
     });
-    socket.emit("room-participants",
-      rooms[roomId].filter(p => p.socketId !== socket.id)
-    );
-    console.log(`${userName} (${role}) joined video room ${roomId}`);
+
+    // Tell the new joiner who was already there
+    socket.emit("room-participants", existingParticipants);
+
+    console.log(`${userName} (${role}) joined video room ${roomId}. Existing: ${existingParticipants.length}`);
   });
 
   socket.on("offer", ({ to, offer }) => {
