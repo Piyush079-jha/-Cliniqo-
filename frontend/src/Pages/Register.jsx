@@ -35,6 +35,13 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Clear old session first
+      await axios.get(
+        "https://cliniqo-backend.onrender.com/api/v1/user/logout",
+        { withCredentials: true }
+      );
+    } catch (_) {}
+    try {
       const res = await axios.post(
         "https://cliniqo-backend.onrender.com/api/v1/user/patient/register",
         form,
