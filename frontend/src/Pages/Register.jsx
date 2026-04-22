@@ -12,6 +12,8 @@ const Register = () => {
   const navigate          = useNavigate();
 
   useEffect(() => {
+    // Clear any existing session cookie so fresh registration is possible
+    document.cookie = "patientToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
     setIsAuthenticated(false);
     requestAnimationFrame(() => requestAnimationFrame(() => setPhase("entering")));
     const t = setTimeout(() => setPhase("visible"), 50);
