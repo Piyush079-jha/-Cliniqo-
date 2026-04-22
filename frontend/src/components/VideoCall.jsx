@@ -382,11 +382,16 @@ useEffect(() => {
 });
 
       // When a new person joins after us — we send them an offer
-      socket.on("user-joined", async ({ socketId, userName: uName }) => {
+      socket.on("user-joined", async ({ socketId, userName: uName, role: uRole }) => {
         if (!isMounted) return;
         setRemoteName(uName);
         setStatusMsg(`${uName} joined — connecting…`);
         ringtoneRef.current?.play().catch(() => {});
+
+        // Only the DOCTOR sends the offer — patient waits for it
+        // This prevents both sides sending offers simultaneously
+        if (role !== "Doctor") return;
+
         const pc = createPC(socketId);
         const offer = await pc.createOffer({
           offerToReceiveAudio: true,
@@ -394,7 +399,7 @@ useEffect(() => {
         });
         await pc.setLocalDescription(offer);
         socket.emit("offer", { to: socketId, offer });
-        console.log(`[WebRTC] Sent offer to new joiner ${socketId}`);
+        console.log(`[WebRTC] Doctor sent offer to new joiner ${socketId}`);
       });
 
       // We received an offer — always process it, close old PC if needed
@@ -417,10 +422,12 @@ useEffect(() => {
         }
       });
 
-      // We received an answer — only set if we're in have-local-offer state
       socket.on("answer", async ({ answer }) => {
         if (!pcRef.current) return;
-        if (pcRef.current.signalingState !== "have-local-offer") return;
+        if (pcRef.current.signalingState !== "have-local-offer") {
+          console.warn("[WebRTC] Ignoring answer in state:", pcRef.current.signalingState);
+          return;
+        }
         try {
           await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
           for (const c of iceCandidateBuf.current) {
