@@ -239,12 +239,14 @@ useEffect(() => {
 
     // When remote video arrives — attach it to the big screen
     pc.ontrack = (e) => {
-      console.log("[WebRTC] ontrack fired", e.streams);
-      if (e.streams && e.streams[0]) {
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = e.streams[0];
-          remoteVideoRef.current.play().catch(() => {});
-        }
+      console.log("[WebRTC] ontrack fired", e.streams, e.track);
+      const stream = e.streams?.[0] || new MediaStream([e.track]);
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = stream;
+        remoteVideoRef.current.play().catch(() => {});
+        setConnected(true);
+        setCallState(CALL_STATE.ACTIVE);
+        setStatusMsg("Connected");
       }
     };
 
@@ -355,15 +357,18 @@ useEffect(() => {
       socket.emit("join-room", { roomId, userId, userName, role });
 
       // If someone is already in the room — we send them an offer
-     socket.on("room-participants", async (participants) => {
+   socket.on("room-participants", async (participants) => {
   if (!isMounted || participants.length === 0) return;
-  const peer = participants[0];  // ← declare FIRST
+  const peer = participants[0];
   setRemoteName(peer.userName);
   setStatusMsg(`${peer.userName} is already here — connecting…`);
-  ringtoneRef.current?.play().catch(() => {});  // ← play ringtone here
+  ringtoneRef.current?.play().catch(() => {});
 
   const pc = createPC(peer.socketId);
-  const offer = await pc.createOffer();
+  const offer = await pc.createOffer({
+    offerToReceiveAudio: true,
+    offerToReceiveVideo: true,
+  });
   await pc.setLocalDescription(offer);
   socket.emit("offer", { to: peer.socketId, offer });
   console.log(`[WebRTC] Sent offer to ${peer.socketId}`);
@@ -374,9 +379,12 @@ useEffect(() => {
         if (!isMounted) return;
         setRemoteName(uName);
         setStatusMsg(`${uName} joined — connecting…`);
-ringtoneRef.current?.play().catch(() => {});
+        ringtoneRef.current?.play().catch(() => {});
         const pc = createPC(socketId);
-        const offer = await pc.createOffer();
+        const offer = await pc.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true,
+        });
         await pc.setLocalDescription(offer);
         socket.emit("offer", { to: socketId, offer });
         console.log(`[WebRTC] Sent offer to new joiner ${socketId}`);
