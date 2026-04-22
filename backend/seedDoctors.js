@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./.env" });
+
 
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -399,12 +400,12 @@ const seedDoctors = async () => {
         continue;
       }
 
-      await User.create({
-        ...commonFields,
-        ...doc,
-        password: commonFields.password,
-      });
-
+      const hashed = await bcrypt.hash(commonFields.password, 10);
+await User.create({
+  ...commonFields,
+  ...doc,
+  password: hashed,
+});
       console.log(
         `✅ Added: Dr. ${doc.firstName} ${doc.lastName} — ${doc.doctorDepartment}`,
       );
