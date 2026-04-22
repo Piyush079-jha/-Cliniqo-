@@ -16,14 +16,13 @@ const AppWrapper = () => {
   const [admin, setAdmin]                               = useState({});
   const [isDoctorAuthenticated, setIsDoctorAuthenticated] = useState(false);
   const [doctor, setDoctor]                             = useState({});
-  const [loading, setLoading]                           = useState(true);
+  // const [loading, setLoading]                           = useState(true);
 
   // Fetch fresh user on every app load
   React.useEffect(() => {
     axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
       .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
-      .catch(() => { setUser({}); setIsAuthenticated(false); })
-      .finally(() => setLoading(false));
+      .catch(() => { setUser({}); setIsAuthenticated(false); });
   }, []);
 
   return (
@@ -41,16 +40,10 @@ const AppWrapper = () => {
         setIsDoctorAuthenticated,
         doctor,
         setDoctor,
-        loading,
+        // loading,
       }}
     >
-      {loading ? (
-        <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",flexDirection:"column",gap:"16px",fontFamily:"Outfit,sans-serif"}}>
-          <div style={{width:"44px",height:"44px",border:"4px solid #e0ece5",borderTop:"4px solid #1a3d2e",borderRadius:"50%",animation:"spin 0.8s linear infinite"}} />
-          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-          <p style={{color:"#486057",fontSize:"15px"}}>Starting up, please wait…</p>
-        </div>
-      ) : <App />}
+      <App />
     </Context.Provider>
   );
 };
