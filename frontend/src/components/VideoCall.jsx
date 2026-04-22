@@ -255,6 +255,19 @@ useEffect(() => {
     pc.onconnectionstatechange = () => {
       const state = pc.connectionState;
       console.log(`[WebRTC] Connection state: ${state}`);
+    };
+    pc.oniceconnectionstatechange = () => {
+      console.log(`[WebRTC] ICE state: ${pc.iceConnectionState}`);
+    };
+    pc.onicegatheringstatechange = () => {
+      console.log(`[WebRTC] ICE gathering: ${pc.iceGatheringState}`);
+    };
+    pc.onsignalingstatechange = () => {
+      console.log(`[WebRTC] Signaling state: ${pc.signalingState}`);
+    };
+    pc.onconnectionstatechange = () => {
+      const state = pc.connectionState;
+      console.log(`[WebRTC] Connection state: ${state}`);
 
      if (state === "connected") {
   setConnected(true);
@@ -358,10 +371,9 @@ ringtoneRef.current?.play().catch(() => {});
         console.log(`[WebRTC] Sent offer to new joiner ${socketId}`);
       });
 
-      // We received an offer — only process if not already in a call
+      // We received an offer — always process it, close old PC if needed
       socket.on("offer", async ({ from, offer }) => {
         if (!isMounted) return;
-        if (pcRef.current?.signalingState === "have-local-offer") return;
         try {
           iceCandidateBuf.current = [];
           const pc = createPC(from);
