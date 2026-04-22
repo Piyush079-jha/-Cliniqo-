@@ -239,8 +239,12 @@ useEffect(() => {
 
     // When remote video arrives — attach it to the big screen
     pc.ontrack = (e) => {
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = e.streams[0];
+      console.log("[WebRTC] ontrack fired", e.streams);
+      if (e.streams && e.streams[0]) {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = e.streams[0];
+          remoteVideoRef.current.play().catch(() => {});
+        }
       }
     };
 
@@ -258,6 +262,13 @@ useEffect(() => {
     };
     pc.oniceconnectionstatechange = () => {
       console.log(`[WebRTC] ICE state: ${pc.iceConnectionState}`);
+      if (pc.iceConnectionState === "connected" || pc.iceConnectionState === "completed") {
+        setConnected(true);
+        setCallState(CALL_STATE.ACTIVE);
+        setStatusMsg("Connected");
+        ringtoneRef.current?.pause();
+        if (ringtoneRef.current) ringtoneRef.current.currentTime = 0;
+      }
     };
     pc.onicegatheringstatechange = () => {
       console.log(`[WebRTC] ICE gathering: ${pc.iceGatheringState}`);
@@ -269,7 +280,7 @@ useEffect(() => {
       const state = pc.connectionState;
       console.log(`[WebRTC] Connection state: ${state}`);
 
-     if (state === "connected") {
+     if (state === "connected" || state === "completed") {
   setConnected(true);
   setCallState(CALL_STATE.ACTIVE);
   setStatusMsg("Connected");
