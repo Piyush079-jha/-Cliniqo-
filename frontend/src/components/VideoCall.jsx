@@ -164,6 +164,7 @@ export default function VideoCall({ role: propRole, userName: propUserName, onEn
   const pcRef            = useRef(null); // RTCPeerConnection instance
   const localStream      = useRef(null); // your local camera/mic stream
   const iceCandidateBuf  = useRef([]);   // buffer ICE candidates before remote desc is set
+  const remoteAudioRef   = useRef(null); // separate audio element for remote audio
 
   // ── Timer and chat refs ───────────────────────────────────────────────────
   const timerRef   = useRef(null);  // call duration interval
@@ -241,13 +242,24 @@ useEffect(() => {
     pc.ontrack = (e) => {
       console.log("[WebRTC] ontrack fired", e.streams, e.track);
       const stream = e.streams?.[0] || new MediaStream([e.track]);
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = stream;
-        remoteVideoRef.current.play().catch(() => {});
-        setConnected(true);
-        setCallState(CALL_STATE.ACTIVE);
-        setStatusMsg("Connected");
+      
+      if (e.track.kind === "video") {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+          remoteVideoRef.current.play().catch(() => {});
+        }
       }
+      
+      if (e.track.kind === "audio") {
+        if (remoteAudioRef.current) {
+          remoteAudioRef.current.srcObject = stream;
+          remoteAudioRef.current.play().catch(() => {});
+        }
+      }
+
+      setConnected(true);
+      setCallState(CALL_STATE.ACTIVE);
+      setStatusMsg("Connected");
     };
 
     // Send ICE candidates to the other person through the socket
@@ -1037,6 +1049,7 @@ socket.on("call-ended-notify", ({ endedBy: by }) => {
             display: "block",
           }}
         />
+        <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} />
 
         {/* ── Waiting screen — shown when other person hasn't joined yet ── */}
         {!connected && ![CALL_STATE.ENDED, CALL_STATE.DECLINED, CALL_STATE.MISSED].includes(callState) && (
