@@ -18,12 +18,12 @@ const AppWrapper = () => {
   const [doctor, setDoctor]                             = useState({});
   // const [loading, setLoading]                           = useState(true);
 
-  // Fetch fresh user on every app load
-  React.useEffect(() => {
-    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
-      .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
-      .catch(() => { setUser({}); setIsAuthenticated(false); });
-  }, []);
+  // // Fetch fresh user on every app load
+  // React.useEffect(() => {
+  //   axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
+  //     .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
+  //     .catch(() => { setUser({}); setIsAuthenticated(false); });
+  // }, []);
 
   return (
     <Context.Provider
