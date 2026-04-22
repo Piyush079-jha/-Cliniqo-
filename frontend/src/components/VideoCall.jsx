@@ -371,6 +371,12 @@ useEffect(() => {
   setStatusMsg(`${peer.userName} is already here — connecting…`);
   ringtoneRef.current?.play().catch(() => {});
 
+  // Only Doctor initiates offer — patient waits
+  if (role !== "Doctor") {
+    console.log("[WebRTC] Patient waiting for Doctor's offer...");
+    return;
+  }
+
   const pc = createPC(peer.socketId);
   const offer = await pc.createOffer({
     offerToReceiveAudio: true,
@@ -378,7 +384,7 @@ useEffect(() => {
   });
   await pc.setLocalDescription(offer);
   socket.emit("offer", { to: peer.socketId, offer });
-  console.log(`[WebRTC] Sent offer to ${peer.socketId}`);
+  console.log(`[WebRTC] Doctor sent offer to ${peer.socketId}`);
 });
 
       // When a new person joins after us — we send them an offer
