@@ -36,7 +36,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/v1/user/patient/register",
+        "https://cliniqo-backend.onrender.com/api/v1/user/patient/register",
         form,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
