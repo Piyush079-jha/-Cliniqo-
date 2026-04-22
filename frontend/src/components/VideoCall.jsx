@@ -1050,6 +1050,7 @@ socket.on("call-ended-notify", ({ endedBy: by }) => {
           }}
         />
         <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} />
+        {/* <audio ref={remoteAudioRef} autoPlay style={{ display: "none" }} /> */}
 
         {/* ── Waiting screen — shown when other person hasn't joined yet ── */}
         {!connected && ![CALL_STATE.ENDED, CALL_STATE.DECLINED, CALL_STATE.MISSED].includes(callState) && (
