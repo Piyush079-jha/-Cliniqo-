@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import axios from "axios";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
@@ -15,6 +16,13 @@ const AppWrapper = () => {
   const [admin, setAdmin]                               = useState({});
   const [isDoctorAuthenticated, setIsDoctorAuthenticated] = useState(false);
   const [doctor, setDoctor]                             = useState({});
+
+  // Fetch fresh user on every app load
+  React.useEffect(() => {
+    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/me", { withCredentials: true })
+      .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
+      .catch(() => { setUser({}); setIsAuthenticated(false); });
+  }, [isAuthenticated]);
 
   return (
     <Context.Provider

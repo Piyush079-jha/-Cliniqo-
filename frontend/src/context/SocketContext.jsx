@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import ringtoneFile from "../assets/ringtone.mp3";
 
-const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com/api/v1/user/login";
+const BASE = import.meta.env.VITE_BACKEND_URL || "https://cliniqo-backend.onrender.com";
 
 const SocketContext = createContext(null);
 
