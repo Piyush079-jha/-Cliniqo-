@@ -54,7 +54,7 @@ const Login = () => {
       } else {
         setIsAuthenticated(true);
         setUser(res.data.user);
-        navigate("/");
+        navigate("/home");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
@@ -69,7 +69,7 @@ const Login = () => {
 
 if (isAdminAuthenticated) return <Navigate to="/admin/dashboard" />;
   if (isDoctorAuthenticated) return <Navigate to="/doctor/dashboard" />;
-  if (isAuthenticated) return <Navigate to="/home" />;
+  if (isAuthenticated) return <Navigate to="/" />;
   const stagger = (delay = 0) => ({
     opacity: phase === "visible" || phase === "entering" ? 1 : 0,
     transform:

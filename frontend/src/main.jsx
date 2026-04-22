@@ -22,7 +22,7 @@ const AppWrapper = () => {
     axios.get("https://cliniqo-backend.onrender.com/api/v1/user/me", { withCredentials: true })
       .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
       .catch(() => { setUser({}); setIsAuthenticated(false); });
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <Context.Provider
