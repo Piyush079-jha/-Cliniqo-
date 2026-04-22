@@ -177,10 +177,20 @@ const doSearch = () => {
     onSearch({ query: sug.label, dept: sug.type === "dept" ? sug.label : dept });
   };
 
+  const popularToDept = {
+    "Cardiologist": "Cardiology",
+    "Dermatologist": "Dermatology",
+    "Neurologist": "Neurology",
+    "Dentist": "",
+    "Pediatrician": "Pediatrics",
+    "Orthopedic": "Orthopedics",
+  };
+
   const pickPopular = (tag) => {
+    const mappedDept = popularToDept[tag] || "";
     setQuery(tag);
     setActiveTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
-    onSearch({ query: tag, dept });
+    onSearch({ query: mappedDept || tag, dept: mappedDept || dept });
   };
 
   // const clearAll = () => {
