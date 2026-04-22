@@ -193,12 +193,6 @@ const doSearch = () => {
     onSearch({ query: mappedDept || tag, dept: mappedDept || dept });
   };
 
-  // const clearAll = () => {
-  //   setQuery(""); setCity(""); setDept(""); setActiveTags([]);
-  //   onSearch({ query: "", city: "", dept: "" });
-  // };
-
-
   const clearAll = () => {
     setQuery(""); setDept(""); setActiveTags([]);
     onSearch({ query: "", dept: "" });

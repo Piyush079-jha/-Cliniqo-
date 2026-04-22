@@ -12,6 +12,7 @@ const Register = () => {
   const navigate          = useNavigate();
 
   useEffect(() => {
+    setIsAuthenticated(false);
     requestAnimationFrame(() => requestAnimationFrame(() => setPhase("entering")));
     const t = setTimeout(() => setPhase("visible"), 50);
     return () => clearTimeout(t);
@@ -35,7 +36,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "https://cliniqo-backend.onrender.com/api/v1/user/patient/register",
+        "http://localhost:4000/api/v1/user/patient/register",
         form,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
@@ -341,7 +342,7 @@ const Register = () => {
               </div>
 
               <div style={stagger(385)}>
-                <button type="submit" className="rp-submit">Create Account →</button>
+                <button type="submit" className="rp-submit">Register Now →</button>
               </div>
             </form>
 
