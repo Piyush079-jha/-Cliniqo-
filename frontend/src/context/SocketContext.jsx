@@ -70,7 +70,14 @@ export function SocketProvider({ children, user, doctor }) {
       setSocketReady(false);
     }
 
-    const socket = io(BASE, { withCredentials: true });
+    const socket = io(BASE, {
+      withCredentials: true,
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      timeout: 20000,
+    });
     socketRef.current = socket;
 
     socket.on("connect", () => {

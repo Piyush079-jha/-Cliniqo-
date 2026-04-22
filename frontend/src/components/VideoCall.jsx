@@ -12,16 +12,25 @@ const ICE_SERVERS = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
     {
       urls: [
         "turn:openrelay.metered.ca:80",
         "turn:openrelay.metered.ca:443",
         "turn:openrelay.metered.ca:443?transport=tcp",
+        "turns:openrelay.metered.ca:443?transport=tcp",
       ],
       username: "openrelayproject",
       credential: "openrelayproject",
     },
+    {
+      urls: "turn:relay.metered.ca:80",
+      username: "e9d3b7b0d5c7f1a2b3c4d5e6",
+      credential: "f1a2b3c4d5e6f7a8",
+    },
   ],
+  iceCandidatePoolSize: 10,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -208,7 +217,12 @@ useEffect(() => {
   const createPC = useCallback((remoteSocketId) => {
     if (pcRef.current) pcRef.current.close();
 
-    const pc = new RTCPeerConnection(ICE_SERVERS);
+    const pc = new RTCPeerConnection({
+      ...ICE_SERVERS,
+      iceTransportPolicy: "all",
+      bundlePolicy: "max-bundle",
+      rtcpMuxPolicy: "require",
+    });
     pcRef.current = pc;
 
     // Add our local tracks (audio/video) to the connection

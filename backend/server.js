@@ -22,6 +22,11 @@ const io = new Server(httpServer, {
     methods:     ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket", "polling"],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  upgradeTimeout: 30000,
+  allowUpgrades: true,
 });
 
 app.set("io", io);
