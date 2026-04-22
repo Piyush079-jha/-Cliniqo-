@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import { useNavigate, Navigate } from "react-router-dom";
-
+import { BASE_URL } from "../config.js";
 const Login = () => {
   const {
     isAuthenticated,
@@ -35,7 +35,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/login",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/login`,
         { email, password, confirmPassword: password, role },
         {
           withCredentials: true,
