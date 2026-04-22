@@ -150,7 +150,7 @@ export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 
 export const logoutAdmin = catchAsyncErrors(async (req, res, next) => {
   res.status(201)
-    .cookie("adminToken", "", { httpOnly: true, expires: new Date(Date.now()) })
+    .cookie("adminToken", "", { httpOnly: true, expires: new Date(Date.now()), sameSite: "none", secure: true })
     .json({ success: true, message: "Admin Logged Out Successfully." });
 });
 
