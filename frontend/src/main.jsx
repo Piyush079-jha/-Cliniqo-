@@ -20,7 +20,7 @@ const AppWrapper = () => {
 
   // Fetch fresh user on every app load
   React.useEffect(() => {
-    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
+    axios.get("https://cliniqo-backend.onrender.com/api/v1/user/me", { withCredentials: true })
       .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
       .catch(() => { setUser({}); setIsAuthenticated(false); });
   }, []);
