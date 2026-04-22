@@ -319,6 +319,8 @@ export const logoutDoctor = catchAsyncErrors(async (req, res, next) => {
     .cookie("doctorToken", "", {
       httpOnly: true,
       expires: new Date(Date.now()),
+      sameSite: "none",
+      secure: true,
     })
     .json({ success: true, message: "Doctor Logged Out Successfully." });
 });
