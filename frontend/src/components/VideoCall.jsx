@@ -358,30 +358,40 @@ ringtoneRef.current?.play().catch(() => {});
         console.log(`[WebRTC] Sent offer to new joiner ${socketId}`);
       });
 
-      // We received an offer — create answer, flush buffered ICE candidates
+      // We received an offer — only process if not already in a call
       socket.on("offer", async ({ from, offer }) => {
         if (!isMounted) return;
-        iceCandidateBuf.current = [];
-        const pc = createPC(from);
-        await pc.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        socket.emit("answer", { to: from, answer });
-        // Flush any ICE candidates that arrived before offer was processed
-        for (const c of iceCandidateBuf.current) {
-          try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+        if (pcRef.current?.signalingState === "have-local-offer") return;
+        try {
+          iceCandidateBuf.current = [];
+          const pc = createPC(from);
+          await pc.setRemoteDescription(new RTCSessionDescription(offer));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          socket.emit("answer", { to: from, answer });
+          for (const c of iceCandidateBuf.current) {
+            try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+          }
+          iceCandidateBuf.current = [];
+          console.log(`[WebRTC] Sent answer to ${from}`);
+        } catch (err) {
+          console.error("[WebRTC] offer handling error:", err);
         }
-        iceCandidateBuf.current = [];
-        console.log(`[WebRTC] Sent answer to ${from}`);
       });
 
-      // We received an answer — set remote description then flush buffered ICE candidates
+      // We received an answer — only set if we're in have-local-offer state
       socket.on("answer", async ({ answer }) => {
-        await pcRef.current?.setRemoteDescription(new RTCSessionDescription(answer));
-        for (const c of iceCandidateBuf.current) {
-          try { await pcRef.current?.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+        if (!pcRef.current) return;
+        if (pcRef.current.signalingState !== "have-local-offer") return;
+        try {
+          await pcRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+          for (const c of iceCandidateBuf.current) {
+            try { await pcRef.current.addIceCandidate(new RTCIceCandidate(c)); } catch {}
+          }
+          iceCandidateBuf.current = [];
+        } catch (err) {
+          console.error("[WebRTC] setRemoteDescription answer error:", err);
         }
-        iceCandidateBuf.current = [];
       });
 
       // ICE candidate received — buffer if remote description not set yet
