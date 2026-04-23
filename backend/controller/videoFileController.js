@@ -41,6 +41,12 @@ export const upload = multer({
 // Uploads file buffer to Cloudinary and returns the secure URL
 // ─────────────────────────────────────────────────────────────────────────────
 export const uploadChatFile = catchAsyncErrors(async (req, res, next) => {
+  console.log("[Upload] Cloudinary config:", {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? "SET" : "MISSING",
+    api_key:    process.env.CLOUDINARY_API_KEY    ? "SET" : "MISSING",
+    api_secret: process.env.CLOUDINARY_API_SECRET ? "SET" : "MISSING",
+  });
+
   if (!req.file) {
     return next(new ErrorHandler("No file provided", 400));
   }
