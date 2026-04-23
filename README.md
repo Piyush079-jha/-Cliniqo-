@@ -1,6 +1,6 @@
-# 🏥 Cliniqo - Hospital Management System
+# 🏥 Cliniqo - AI-Powered Hospital Management System
 
-Your personal healthcare platform. Built with MERN Stack.
+Your smartest healthcare companion. Book doctors, consult live, and get AI-driven guidance — all in one place. Built with MERN Stack.
 
 ---
 
@@ -23,17 +23,19 @@ cd backend
 npm install
 ```
 
-**Update `config.env`** with your credentials:
+**Create a `config.env`** file inside the backend folder with these values:
 ```
 PORT=5000
-MONGO_URI=mongodb+srv://piyushjha1134_db_user:qVTzURLYpjGg9tdO@hsm.eejtwhj.mongodb.net/HSM?retryWrites=true&w=majority&appName=HSM
-JWT_SECRET_KEY=cliniqo_secret_key_2024_piyush
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET_KEY=your_jwt_secret_key
 JWT_EXPIRES=7d
 COOKIE_EXPIRE=7
 FRONTEND_URL=http://localhost:5173
-CLOUDINARY_CLOUD_NAME=dqjwxm8bo
-CLOUDINARY_API_KEY=431457789997321
-CLOUDINARY_API_SECRET=YOUR_CLOUDINARY_SECRET_HERE  ← Replace this!
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+SMTP_EMAIL=your_smtp_email
+SMTP_PASSWORD=your_smtp_app_password
 ```
 
 Then run:
@@ -65,11 +67,10 @@ Opens at: **http://localhost:5173**
 
 | URL | Page |
 |-----|------|
-| `/` | Home |
+| `/` | Login |
+| `/register` | Patient Registration |
 | `/appointment` | Book Appointment |
 | `/about` | About Us |
-| `/login` | Login (Patient OR Admin toggle) |
-| `/register` | Patient Registration |
 | `/admin/login` | Admin Login |
 | `/admin/dashboard` | Admin Dashboard |
 | `/admin/appointments` | Manage Appointments |
@@ -77,6 +78,9 @@ Opens at: **http://localhost:5173**
 | `/admin/messages` | View Messages |
 | `/admin/doctor/addnew` | Add New Doctor |
 | `/admin/addnew` | Add New Admin |
+| `/doctor/dashboard` | Doctor Dashboard |
+| `/patient/dashboard` | Patient Dashboard |
+| `/video/:appointmentId` | Video Consultation |
 
 ---
 
@@ -85,11 +89,9 @@ Opens at: **http://localhost:5173**
 To create your first admin, use a tool like **Postman** or **Thunder Client**:
 
 ```
-POST https://cliniqo-backend.onrender.com/api/v1/user/login/api/v1/user/patient/register
+POST http://localhost:5000/api/v1/user/patient/register
 ```
 Then change the role in MongoDB directly from "Patient" to "Admin".
-
-OR use the seed route if you add one.
 
 ---
 
@@ -113,4 +115,24 @@ Without images, emoji placeholders will show instead.
 - **Database**: MongoDB Atlas
 - **Auth**: JWT + Cookies
 - **Image Upload**: Cloudinary
+- **Real-time**: Socket.IO (video consultations & notifications)
+- **AI Assistant**: Integrated AI chat for patient guidance
 - **Styling**: Custom CSS (Green & White medical theme)
+
+---
+
+## ✨ Features
+
+- 🤖 AI-powered assistant for patient queries and doctor recommendations
+- 📹 Live video consultations between doctor and patient
+- 📅 Appointment booking and management
+- 🔒 Role-based access — Patient, Doctor, Admin
+- 📧 Forgot password via email (Nodemailer)
+- ☁️ Cloudinary image uploads for doctor avatars
+- 📊 Admin dashboard with full control
+
+---
+
+## 👨‍💻 About
+
+Built by **Piyush Kumar Jha** — a full-stack developer from India. If you found this useful, a ⭐ on the repo would mean a lot!
