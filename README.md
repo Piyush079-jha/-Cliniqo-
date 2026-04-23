@@ -1,29 +1,73 @@
-# 🏥 Cliniqo - AI-Powered Hospital Management System
+# 🏥 Cliniqo — AI-Powered Hospital Management System
 
-Your smartest healthcare companion. Book doctors, consult live, and get AI-driven guidance — all in one place. Built with MERN Stack.
+Cliniqo is a full-stack hospital management system I built using the MERN stack. It has everything you'd expect from a real healthcare platform — booking appointments, live video consultations, an AI assistant to guide patients, and even a voice assistant to help doctors work hands-free.
 
----
-
-## 📁 Project Structure
-
-```
-cliniqo/
-├── backend/        ← Node.js + Express + MongoDB
-└── frontend/       ← React + Vite (includes admin panel at /admin)
-```
+🔗 Live Demo: https://cliniqo-ten.vercel.app/
 
 ---
 
-## ⚙️ Setup Instructions
+## ✨ What it can do
 
-### 1. Backend Setup
+- Sign up, log in, and reset your password securely using JWT authentication
+- Book appointments with doctors across 25+ specialities
+- Chat with an AI assistant that understands your symptoms and recommends the right doctor
+- Doctors get a voice assistant to manage schedules and appointments hands-free
+- Live peer-to-peer video consultations between doctor and patient powered by WebRTC
+- Role-based dashboards for Patient, Doctor and Admin
+- Admins can manage doctors, appointments, messages and reviews from a full control panel
+- Secure forgot password flow via email using Nodemailer
+- Doctor avatars uploaded and stored on Cloudinary
+
+---
+
+## 🧰 Tech Stack
+
+**Frontend:** React 18, Vite, React Router  
+**Backend:** Node.js, Express.js, MongoDB, Mongoose, JWT  
+**Real-time:** Socket.IO, WebRTC  
+**AI Assistant:** Claude AI  
+**Voice Assistant:** Web Speech API  
+**Image Upload:** Cloudinary  
+**Deployment:** Vercel (Frontend), Render (Backend)
+
+---
+
+## 🚀 Deployed on Vercel
+
+The frontend is live on Vercel. If you want to deploy your own copy, here's how:
+
+1. Push your code to GitHub
+2. Go to vercel.com, create a new project and import your repo
+3. Set the root directory to `frontend`
+4. Add your backend URL as an environment variable:
+```
+VITE_BACKEND_URL=https://your-backend-url.onrender.com
+```
+5. Hit deploy and you're done!
+
+For the backend, deploy on Render — it's free and works great with Node.js apps.
+
+---
+
+## ⚙️ Running it locally
 
 ```bash
+# Clone the repo
+git clone https://github.com/Piyush079-jha/-Cliniqo-.git
+
+# Start the backend
 cd backend
 npm install
+node server.js
+
+# Start the frontend (open a new terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
-**Create a `config.env`** file inside the backend folder with these values:
+Create a `config.env` file inside the `backend` folder with these values:
+
 ```
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
@@ -38,101 +82,12 @@ SMTP_EMAIL=your_smtp_email
 SMTP_PASSWORD=your_smtp_app_password
 ```
 
-Then run:
-```bash
-node server.js
-```
-
-You should see:
-```
-Server listening at port 5000
-Connected to database!
-```
-
 ---
 
-### 2. Frontend Setup
+## 👨‍💻 About Me
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+Hi, I'm Piyush Jha — a passionate full-stack developer from India who loves turning ideas into real, working products. I built Cliniqo from scratch to sharpen my MERN skills and explore how AI and real-time tech can make healthcare more accessible. If you found this project useful, a ⭐ on the repo would mean a lot! And if you want to connect, collaborate, or just say hi — I'm always up for it. 🙌
 
-Opens at: **http://localhost:5173**
+[GitHub](https://github.com/Piyush079-jha) · [LinkedIn](https://www.linkedin.com/in/piyush-jha1134/)
 
----
-
-## 🌐 Routes
-
-| URL | Page |
-|-----|------|
-| `/` | Login |
-| `/register` | Patient Registration |
-| `/appointment` | Book Appointment |
-| `/about` | About Us |
-| `/admin/login` | Admin Login |
-| `/admin/dashboard` | Admin Dashboard |
-| `/admin/appointments` | Manage Appointments |
-| `/admin/doctors` | View Doctors |
-| `/admin/messages` | View Messages |
-| `/admin/doctor/addnew` | Add New Doctor |
-| `/admin/addnew` | Add New Admin |
-| `/doctor/dashboard` | Doctor Dashboard |
-| `/patient/dashboard` | Patient Dashboard |
-| `/video/:appointmentId` | Video Consultation |
-
----
-
-## 🔑 First Admin Setup
-
-To create your first admin, use a tool like **Postman** or **Thunder Client**:
-
-```
-POST http://localhost:5000/api/v1/user/patient/register
-```
-Then change the role in MongoDB directly from "Patient" to "Admin".
-
----
-
-## 📦 Images (Optional)
-
-If you have the original department images, place them in:
-```
-frontend/public/departments/
-  pedia.jpg, ortho.jpg, cardio.jpg, neuro.jpg,
-  onco.jpg, radio.jpg, therapy.jpg, derma.jpg, ent.jpg
-```
-
-Without images, emoji placeholders will show instead.
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React 18 + Vite + React Router
-- **Backend**: Node.js + Express
-- **Database**: MongoDB Atlas
-- **Auth**: JWT + Cookies
-- **Image Upload**: Cloudinary
-- **Real-time**: Socket.IO (video consultations & notifications)
-- **AI Assistant**: Integrated AI chat for patient guidance
-- **Styling**: Custom CSS (Green & White medical theme)
-
----
-
-## ✨ Features
-
-- 🤖 AI-powered assistant for patient queries and doctor recommendations
-- 📹 Live video consultations between doctor and patient
-- 📅 Appointment booking and management
-- 🔒 Role-based access — Patient, Doctor, Admin
-- 📧 Forgot password via email (Nodemailer)
-- ☁️ Cloudinary image uploads for doctor avatars
-- 📊 Admin dashboard with full control
-
----
-
-## 👨‍💻 About
-
-Built by **Piyush Kumar Jha** — a full-stack developer from India. If you found this useful, a ⭐ on the repo would mean a lot!
+Built with ❤️ using MERN Stack + AI
