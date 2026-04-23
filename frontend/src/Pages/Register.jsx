@@ -49,9 +49,9 @@ const Register = () => {
         form,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
-      toast.success(res.data.message);
-      setIsAuthenticated(true);
-      navigate("/");
+      toast.success(res.data.message + " Please log in.");
+      setIsAuthenticated(false);
+      navigate("/login");
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed");
     }

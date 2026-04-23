@@ -333,8 +333,6 @@ export const getDoctorDetails = catchAsyncErrors(async (req, res, next) => {
 
 // Get doctor's own appointments (all appointments assigned to this doctor)
 export const getDoctorAppointments = catchAsyncErrors(async (req, res, next) => {
-  // Import Appointment model at the top of userController.js:
-  // import { Appointment } from "../models/appointmentSchema.js";
   const { Appointment } = await import("../models/appointmentSchema.js");
   const appointments = await Appointment.find({ doctorId: req.user._id }).sort({ createdAt: -1 });
   res.status(200).json({ success: true, appointments });
