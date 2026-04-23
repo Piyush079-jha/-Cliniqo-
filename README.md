@@ -88,6 +88,7 @@ SMTP_PASSWORD=your_smtp_app_password
 
 Hi, I'm Piyush Jha — a passionate full-stack developer from India who loves turning ideas into real, working products. I built Cliniqo from scratch to sharpen my MERN skills and explore how AI and real-time tech can make healthcare more accessible. If you found this project useful, a ⭐ on the repo would mean a lot! And if you want to connect, collaborate, or just say hi — I'm always up for it. 🙌
 
-[GitHub](https://github.com/Piyush079-jha) · [LinkedIn](https://www.linkedin.com/in/piyush-jha1134/)
+[![GitHub](https://img.shields.io/badge/GitHub-Piyush079--jha-181717?style=for-the-badge&logo=github)](https://github.com/Piyush079-jha)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Piyush%20Jha-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/piyush-jha1134/)
 
 Built with ❤️ using MERN Stack + AI
