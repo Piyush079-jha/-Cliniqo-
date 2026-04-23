@@ -160,7 +160,7 @@ const AppInner = () => {
       <Layout>
         <Routes>
           {/* Default */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Public */}
           <Route path="/home"        element={<Home />} />
@@ -213,14 +213,14 @@ const AppInner = () => {
           />
 
           {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Layout>
     </SocketProvider>
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 const App = () => (
   <Router>
     <AppInner />
