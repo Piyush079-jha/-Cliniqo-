@@ -61,7 +61,11 @@ const aiLimiter = rateLimit({
 });
 app.use("/api/v1/ai", aiLimiter);
 app.use(express.urlencoded({ extended: true }));
-app.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" }));
+app.use((req, res, next) => {
+  // Skip express-fileupload for multer-handled routes
+  if (req.path === "/api/v1/videoconsult/upload-file") return next();
+  fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" })(req, res, next);
+});
 
 app.use("/api/v1/message",      messageRouter);
 app.use("/api/v1/user",         userRouter);
