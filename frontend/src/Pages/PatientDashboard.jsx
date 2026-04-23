@@ -478,7 +478,13 @@ const PatientDashboard = () => {
       const map = {};
       (data.consultations || []).forEach((c) => {
         if (c.appointmentId) {
-          // Keep the most recent / highest-priority status per appointment
+          // Don't show old ended/completed consultations — only show if ended within last 2 hours
+          if (["Ended", "Completed"].includes(c.status)) {
+            const endedAt = new Date(c.endedAt || c.updatedAt);
+            const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+            if (endedAt < twoHoursAgo) return; // skip old ended consultations
+          }
+
           const existing = map[c.appointmentId];
           const priority = ["Active","Ringing","Accepted","Pending","Ended","Completed","Declined","Rejected","Missed"];
           const newPriority = priority.indexOf(c.status);
