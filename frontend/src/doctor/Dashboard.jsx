@@ -783,6 +783,10 @@ const CSS = `
   .dd-tabs { padding:0 20px }
   .dd-body { padding:22px 20px 48px }
 }
+  @media(max-width:900px) {
+@media(max-width:900px) {
+  .dd-overview-bottom { grid-template-columns:1fr !important; }
+}
 @media(max-width:680px) {
   .dd-stats-grid { grid-template-columns:1fr 1fr }
   .dd-field-grid  { grid-template-columns:1fr }
@@ -4676,14 +4680,14 @@ const activateVoiceAssistant = () => {
                   </div>
                 ))}
               </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1.6fr 1fr",
-                  gap: 16,
-                }}
-              >
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1.6fr 1fr",
+    gap: 16,
+  }}
+  className="dd-overview-bottom"
+>
                 {/* Recent appointments */}
                 <div
                   style={{
