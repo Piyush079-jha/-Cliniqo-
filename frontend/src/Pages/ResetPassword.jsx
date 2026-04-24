@@ -11,6 +11,8 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [phase, setPhase] = useState("hidden");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase("entering"), 50);
@@ -238,14 +240,24 @@ const ResetPassword = () => {
                 <form onSubmit={handleReset}>
                   <div style={s(210)} className="rp-field">
                     <label>New Password</label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      minLength={8}
-                    />
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        minLength={8}
+                        style={{ paddingRight: "42px" }}
+                      />
+                      <span onClick={() => setShowPassword(!showPassword)} style={{ position:"absolute",right:"13px",top:"50%",transform:"translateY(-50%)",cursor:"pointer",fontSize:"18px",color:"#637a6e",userSelect:"none" }}>
+                        {showPassword ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#637a6e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#637a6e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        )}
+                      </span>
+                    </div>
                     <div className="rp-strength">
                       {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="rp-strength-bar" style={{ background: i <= strength ? strengthColors[strength] : "#d4e8dc" }} />
@@ -258,18 +270,28 @@ const ResetPassword = () => {
 
                   <div style={s(260)} className="rp-field">
                     <label>Confirm New Password</label>
-                    <input
-                      type="password"
-                      value={confirm}
-                      onChange={(e) => setConfirm(e.target.value)}
-                      placeholder="••••••••"
-                      required
-                      style={{
-                        borderColor:
-                          confirm && confirm !== password ? "#ef4444"
-                          : confirm && confirm === password ? "#22c55e" : "",
-                      }}
-                    />
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type={showConfirm ? "text" : "password"}
+                        value={confirm}
+                        onChange={(e) => setConfirm(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        style={{
+                          paddingRight: "42px",
+                          borderColor:
+                            confirm && confirm !== password ? "#ef4444"
+                            : confirm && confirm === password ? "#22c55e" : "",
+                        }}
+                      />
+                      <span onClick={() => setShowConfirm(!showConfirm)} style={{ position:"absolute",right:"13px",top:"50%",transform:"translateY(-50%)",cursor:"pointer",fontSize:"18px",color:"#637a6e",userSelect:"none" }}>
+                        {showConfirm ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#637a6e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#637a6e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        )}
+                      </span>
+                    </div>
                     {confirm && confirm !== password && (
                       <p style={{ color: "#ef4444", fontSize: "12px", marginTop: "5px" }}>⚠ Passwords do not match</p>
                     )}
