@@ -14,12 +14,15 @@ const createBrevoTransport = (user, pass) => nodemailer.createTransport({
 });
 
 const sendBrevoEmail = async (mailOptions) => {
-  try {
-    await createBrevoTransport(process.env.BREVO_SMTP_USER, process.env.BREVO_SMTP_KEY_1).sendMail(mailOptions);
-  } catch (err1) {
-    console.error("Brevo key 1 failed, trying key 2:", err1.message);
-    await createBrevoTransport(process.env.BREVO_SMTP_USER, process.env.BREVO_SMTP_KEY_2).sendMail(mailOptions);
-  }
+  const transport = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    auth: {
+      user: process.env.BREVO_SMTP_USER,
+      pass: process.env.BREVO_SMTP_KEY_1,
+    },
+  });
+  await transport.sendMail(mailOptions);
 };
 import { Appointment } from "../models/appointmentSchema.js"; 
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
@@ -244,8 +247,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   // Send email via Brevo with dual key fallback
   try {
     await sendBrevoEmail({
-      from: process.env.SENDER_EMAIL,
-      replyTo: process.env.SENDER_EMAIL,
+      from: "piyushjha1134@gmail.com",
       to: user.email,
       subject: "Cliniqo — Password Reset Request",
       html: `
