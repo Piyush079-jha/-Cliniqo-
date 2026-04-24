@@ -261,10 +261,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     });
     res.status(200).json({ success: true, message: `Password reset link sent to ${user.email}` });
   } catch (err) {
-    // If email fails, clear the token so user can try again
-    user.resetPasswordToken  = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save({ validateBeforeSave: false });
+    console.error("Email send error:", err);
     return next(new ErrorHandler("Failed to send email. Please try again!", 500));
   }
 });
