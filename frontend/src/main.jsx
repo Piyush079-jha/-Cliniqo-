@@ -56,7 +56,37 @@ const AppWrapper = () => {
         loading,
       }}
     >
-      {loading ? null : <App />}
+      {loading ? (
+        <div style={{
+          position: "fixed", inset: 0,
+          background: "#f4f6f4",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 9999,
+        }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "42px", fontWeight: 700,
+              color: "#0b3324", letterSpacing: "-0.5px",
+            }}>
+              Clini<span style={{ color: "#c9a84c", fontStyle: "italic" }}>qo</span>
+            </div>
+            <div style={{
+              width: "40px", height: "3px", borderRadius: "999px",
+              background: "linear-gradient(90deg, #1a6644, #c9a84c)",
+              margin: "12px auto 0",
+              animation: "loadBar 1.2s ease-in-out infinite alternate",
+            }} />
+          </div>
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,700&display=swap');
+            @keyframes loadBar {
+              from { transform: scaleX(0.3); opacity: 0.5; }
+              to   { transform: scaleX(1);   opacity: 1; }
+            }
+          `}</style>
+        </div>
+      ) : <App />}
     </Context.Provider>
   );
 };
