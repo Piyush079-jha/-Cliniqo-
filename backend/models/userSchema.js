@@ -61,6 +61,8 @@ const userSchema = new mongoose.Schema({
     public_id: String,
     url: String,
   },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
   availability: {
     isAvailable: { type: Boolean, default: true },
     days: {
