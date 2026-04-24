@@ -244,7 +244,8 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   // Send email via Brevo with dual key fallback
   try {
     await sendBrevoEmail({
-      from: `"Cliniqo HMS" <${process.env.SENDER_EMAIL}>`,
+      from: process.env.SENDER_EMAIL,
+      replyTo: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Cliniqo — Password Reset Request",
       html: `
