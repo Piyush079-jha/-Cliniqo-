@@ -75,7 +75,7 @@ const AppWrapper = () => {
               width: "40px", height: "3px", borderRadius: "999px",
               background: "linear-gradient(90deg, #1a6644, #c9a84c)",
               margin: "12px auto 0",
-              animation: "loadBar 1.2s ease-in-out infinite alternate",
+              animation: "loadBar 2.5s ease-in-out infinite alternate",
             }} />
           </div>
           <style>{`
