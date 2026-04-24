@@ -5,7 +5,8 @@ import { generateToken } from "../utils/jwtToken.js";
 import cloudinary from "cloudinary";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+const resend = new Resend(process.env.RESEND_API_KEY);
 import { Appointment } from "../models/appointmentSchema.js"; 
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   const { firstName, lastName, email, phone, dob, gender, password } = req.body;
@@ -226,20 +227,13 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   // Build reset URL (frontend route)
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-  // Send email via Nodemailer
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.SMTP_EMAIL,
-      pass: process.env.SMTP_PASSWORD, // Gmail App Password
-    },
-  });
-
-  const mailOptions = {
-    from: `"Cliniqo HMS" <${process.env.SMTP_EMAIL}>`,
-    to: user.email,
-    subject: "Cliniqo — Password Reset Request",
-    html: `
+  // Send email via Resend
+  try {
+    await resend.emails.send({
+      from: "Cliniqo <onboarding@resend.dev>",
+      to: user.email,
+      subject: "Cliniqo — Password Reset Request",
+      html: `
       <div style="font-family:'Segoe UI',sans-serif;max-width:520px;margin:auto;background:#f4f6f4;border-radius:16px;overflow:hidden;">
         <div style="background:linear-gradient(135deg,#0b3324,#1a6644);padding:36px 40px;text-align:center;">
           <h1 style="color:#fff;font-size:28px;margin:0;letter-spacing:-0.5px;">Clini<span style="color:#c9a84c;font-style:italic;">qo</span></h1>
@@ -264,10 +258,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
         </div>
       </div>
     `,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
+    });
     res.status(200).json({ success: true, message: `Password reset link sent to ${user.email}` });
   } catch (err) {
     // If email fails, clear the token so user can try again

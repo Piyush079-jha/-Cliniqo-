@@ -15,7 +15,7 @@ Cliniqo is a full-stack hospital management system I built using the MERN stack.
 - Live peer-to-peer video consultations between doctor and patient powered by WebRTC
 - Role-based dashboards for Patient, Doctor and Admin
 - Admins can manage doctors, appointments, messages and reviews from a full control panel
-- Secure forgot password flow via email using Nodemailer
+- Secure forgot password flow via email using Resend
 - Doctor avatars uploaded and stored on Cloudinary
 
 ---
@@ -78,8 +78,7 @@ FRONTEND_URL=http://localhost:5173
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-SMTP_EMAIL=your_smtp_email
-SMTP_PASSWORD=your_smtp_app_password
+RESEND_API_KEY=your_resend_api_key
 ```
 
 ---
