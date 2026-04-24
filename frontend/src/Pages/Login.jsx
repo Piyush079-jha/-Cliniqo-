@@ -127,7 +127,7 @@ if (isAdminAuthenticated) return <Navigate to="/admin/dashboard" />;
           50%     { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .lp-page, .lp-page * { box-sizing: border-box; }
 
         .lp-page {
           min-height: 100vh;
