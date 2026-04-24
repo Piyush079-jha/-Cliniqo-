@@ -69,7 +69,7 @@ const Login = () => {
 
 if (isAdminAuthenticated) return <Navigate to="/admin/dashboard" />;
   if (isDoctorAuthenticated) return <Navigate to="/doctor/dashboard" />;
-  if (isAuthenticated) return <Navigate to="/" />;
+  if (isAuthenticated) return <Navigate to="/home" />;
   const stagger = (delay = 0) => ({
     opacity: phase === "visible" || phase === "entering" ? 1 : 0,
     transform:
