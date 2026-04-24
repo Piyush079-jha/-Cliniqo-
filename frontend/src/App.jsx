@@ -160,7 +160,7 @@ const AppInner = () => {
       <Layout>
         <Routes>
           {/* Default */}
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Public */}
           <Route path="/home"        element={<Home />} />
