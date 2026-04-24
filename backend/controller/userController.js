@@ -5,8 +5,22 @@ import { generateToken } from "../utils/jwtToken.js";
 import cloudinary from "cloudinary";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
+import SibApiV3Sdk from "@getbrevo/brevo";
+
+const brevoClient1 = new SibApiV3Sdk.TransactionalEmailsApi();
+brevoClient1.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY_1);
+
+const brevoClient2 = new SibApiV3Sdk.TransactionalEmailsApi();
+brevoClient2.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY_2);
+
+const sendBrevoEmail = async (emailData) => {
+  try {
+    await brevoClient1.sendTransacEmail(emailData);
+  } catch (err1) {
+    console.error("Brevo key 1 failed, trying key 2:", err1.message);
+    await brevoClient2.sendTransacEmail(emailData);
+  }
+};
 import { Appointment } from "../models/appointmentSchema.js"; 
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   const { firstName, lastName, email, phone, dob, gender, password } = req.body;
@@ -227,13 +241,13 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   // Build reset URL (frontend route)
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-  // Send email via Resend
+  // Send email via Brevo with dual key fallback
   try {
-    await resend.emails.send({
-      from: "Cliniqo <onboarding@resend.dev>",
-      to: user.email,
+    await sendBrevoEmail({
+      sender: { name: "Cliniqo HMS", email: process.env.SENDER_EMAIL },
+      to: [{ email: user.email, name: user.firstName }],
       subject: "Cliniqo — Password Reset Request",
-      html: `
+      htmlContent: `
       <div style="font-family:'Segoe UI',sans-serif;max-width:520px;margin:auto;background:#f4f6f4;border-radius:16px;overflow:hidden;">
         <div style="background:linear-gradient(135deg,#0b3324,#1a6644);padding:36px 40px;text-align:center;">
           <h1 style="color:#fff;font-size:28px;margin:0;letter-spacing:-0.5px;">Clini<span style="color:#c9a84c;font-style:italic;">qo</span></h1>
@@ -261,12 +275,12 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
     });
     res.status(200).json({ success: true, message: `Password reset link sent to ${user.email}` });
   } catch (err) {
-    console.error("Email send error:", err);
+    console.error("Brevo email error:", err?.response?.body || err.message);
     return next(new ErrorHandler("Failed to send email. Please try again!", 500));
   }
 });
 
-// ── RESET PASSWORD ───────────────────────────────────────────
+//  RESET PASSWORD 
 export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.params;
   const { password, confirmPassword } = req.body;
