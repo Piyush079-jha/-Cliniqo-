@@ -114,7 +114,7 @@ const ResetPassword = () => {
           to   { width: 0%; }
         }
 
-        * { box-sizing:border-box; margin:0; padding:0; }
+        .rp-page * { box-sizing:border-box; }
 
         .rp-page { min-height:100vh;display:flex;background:#f4f6f4;font-family:'Outfit',sans-serif;overflow:hidden; }
 
