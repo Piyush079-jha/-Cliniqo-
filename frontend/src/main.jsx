@@ -16,14 +16,27 @@ const AppWrapper = () => {
   const [admin, setAdmin]                               = useState({});
   const [isDoctorAuthenticated, setIsDoctorAuthenticated] = useState(false);
   const [doctor, setDoctor]                             = useState({});
-  // const [loading, setLoading]                           = useState(true);
+  const [loading, setLoading]                           = useState(true);
 
-  // // Fetch fresh user on every app load
-  // React.useEffect(() => {
-  //   axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
-  //     .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
-  //     .catch(() => { setUser({}); setIsAuthenticated(false); });
-  // }, []);
+  React.useEffect(() => {
+    const path = window.location.pathname;
+    if (path.startsWith("/admin")) {
+      axios.get("https://cliniqo-backend.onrender.com/api/v1/user/admin/me", { withCredentials: true })
+        .then(res => { setAdmin(res.data.user); setIsAdminAuthenticated(true); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else if (path.startsWith("/doctor")) {
+      axios.get("https://cliniqo-backend.onrender.com/api/v1/user/doctor/me", { withCredentials: true })
+        .then(res => { setDoctor(res.data.user); setIsDoctorAuthenticated(true); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else {
+      axios.get("https://cliniqo-backend.onrender.com/api/v1/user/patient/me", { withCredentials: true })
+        .then(res => { setUser(res.data.user); setIsAuthenticated(true); })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, []);
 
   return (
     <Context.Provider
@@ -40,10 +53,10 @@ const AppWrapper = () => {
         setIsDoctorAuthenticated,
         doctor,
         setDoctor,
-        // loading,
+        loading,
       }}
     >
-      <App />
+      {loading ? null : <App />}
     </Context.Provider>
   );
 };
